@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31129.286
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSPlan", "OSPlan\OSPlan.csproj", "{8D941C11-7565-4AC6-85C7-872A3E39ED2C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8D941C11-7565-4AC6-85C7-872A3E39ED2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D941C11-7565-4AC6-85C7-872A3E39ED2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D941C11-7565-4AC6-85C7-872A3E39ED2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D941C11-7565-4AC6-85C7-872A3E39ED2C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {885CDF12-FB2F-4B3F-A4E6-30B4AEE4AA33}
+	EndGlobalSection
+EndGlobal

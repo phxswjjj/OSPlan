@@ -20,8 +20,28 @@ namespace OSPlan
             //SaveRepository(container);
 
             var products = container.Resolve<ProductRepository>().ReadAll();
+
+            #region sort products..
+
+            #endregion
+
+            var avaiableCount = 10;
+            var totalPlanCount = 0;
+            foreach (var product in products)
+            {
+                var planCount = product.ApplyPlan(avaiableCount);
+                totalPlanCount += planCount;
+                avaiableCount -= planCount;
+            }
+
             var s = JsonConvert.SerializeObject(products, Formatting.Indented);
+            using (var writter = new StreamWriter("result.json"))
+            {
+                writter.Write(s);
+            }
             Console.WriteLine(s);
+
+            Console.WriteLine($"總開機數：{totalPlanCount}, 閒置機台數：{avaiableCount}");
             Console.ReadLine();
         }
 

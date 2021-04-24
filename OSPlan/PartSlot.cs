@@ -9,6 +9,7 @@ namespace OSPlan
     class PartSlot
     {
         public PartType PartType { get; private set; }
+        public List<Part> Parts { get; private set; }
 
         public PartSlot(PartType partType, List<ProductPartEntity> productPartEntities)
         {
@@ -23,6 +24,26 @@ namespace OSPlan
             this.Parts = dic.Select(d => d.Value).ToList();
         }
 
-        public List<Part> Parts { get; private set; }
+        internal int TryPlan(int avaiableCount)
+        {
+            if (avaiableCount == 0) return 0;
+            var partCount = this.Parts.Sum(p => p.Avaiable);
+            var planCount = 0;
+            if (avaiableCount >= partCount)
+                planCount = partCount;
+            else
+                planCount = avaiableCount;
+            return planCount;
+        }
+
+        internal bool ApplyPlan(int planCount)
+        {
+            var origin = planCount;
+            foreach (var part in this.Parts)
+            {
+                planCount -= part.Apply(planCount);
+            }
+            return origin != planCount;
+        }
     }
 }

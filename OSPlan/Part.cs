@@ -27,5 +27,16 @@ namespace OSPlan
             var p = new Part(this);
             return p;
         }
+
+        internal int Apply(int planCount)
+        {
+            var cnt = 0;
+            if (this.Avaiable >= planCount)
+                cnt = planCount;
+            else
+                cnt = this.Avaiable;
+            this.Avaiable -= cnt;
+            return cnt;
+        }
     }
 }

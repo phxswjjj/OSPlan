@@ -14,10 +14,19 @@ namespace OSPlan
     {
         static void Main(string[] args)
         {
+            var isMock = true;
             var container = new UnityContainer();
-            container.RegisterType<IRepository<ProductPartEntity>, JsonContext>(new Unity.Lifetime.PerResolveLifetimeManager(), new InjectionConstructor("data.json"));
-            //container.RegisterType<IRepository<ProductPartEntity>, MockContext>(new Unity.Lifetime.PerResolveLifetimeManager());
-            //SaveRepository(container);
+            if (isMock)
+            {
+                container.RegisterType<IRepository<ProductPartRelation>, MockProductPart>(new Unity.Lifetime.PerResolveLifetimeManager());
+                container.RegisterType<IRepository<Part>, MockPart>(new Unity.Lifetime.PerResolveLifetimeManager());
+                SaveRepository(container);
+            }
+            else
+            {
+                container.RegisterType<IRepository<ProductPartRelation>, JsonContext<ProductPartRelation>>(new Unity.Lifetime.PerResolveLifetimeManager(), new InjectionConstructor("data.json"));
+                container.RegisterType<IRepository<Part>, JsonContext<Part>>(new Unity.Lifetime.PerResolveLifetimeManager(), new InjectionConstructor("parts.json"));
+            }
 
             var products = container.Resolve<ProductRepository>().ReadAll();
 
@@ -34,7 +43,9 @@ namespace OSPlan
                 avaiableCount -= planCount;
             }
 
-            var s = JsonConvert.SerializeObject(products, Formatting.Indented);
+            var results = from product in products
+                          select new { Product = product.Name, Eqp = product.EqpCount };
+            var s = JsonConvert.SerializeObject(results, Formatting.Indented);
             using (var writter = new StreamWriter("result.json"))
             {
                 writter.Write(s);
@@ -47,108 +58,138 @@ namespace OSPlan
 
         static void SaveRepository(IUnityContainer container)
         {
-            var repo = container.Resolve<IRepository<ProductPartEntity>>();
-            var data = repo.ReadAll();
+            var productRepo = container.Resolve<IRepository<ProductPartRelation>>();
+            var productData = productRepo.ReadAll();
 
-            var s = JsonConvert.SerializeObject(data, Formatting.Indented);
-            using (var writter = new StreamWriter("tmp.json"))
+            var productResult = JsonConvert.SerializeObject(productData, Formatting.Indented);
+            using (var writter = new StreamWriter("data.json"))
             {
-                writter.Write(s);
+                writter.Write(productResult);
+            }
+
+            var partRepo = container.Resolve<IRepository<Part>>();
+            var partData = partRepo.ReadAll();
+
+            var partResult = JsonConvert.SerializeObject(partData, Formatting.Indented);
+            using (var writter = new StreamWriter("parts.json"))
+            {
+                writter.Write(partResult);
             }
         }
     }
 
-    class JsonContext : IRepository<ProductPartEntity>
+    class JsonContext<T> : IRepository<T>
     {
-        List<ProductPartEntity> Content;
+        List<T> Content;
         public JsonContext(string path)
         {
             using (var reader = new StreamReader(path))
             {
                 var s = reader.ReadToEnd();
-                this.Content = JsonConvert.DeserializeObject<List<ProductPartEntity>>(s);
+                this.Content = JsonConvert.DeserializeObject<List<T>>(s);
             }
         }
 
-        public ProductPartEntity Read(Predicate<ProductPartEntity> find)
+        public T Read(Predicate<T> find)
         {
             return this.Content.Find(find);
         }
 
-        public IEnumerable<ProductPartEntity> ReadAll()
+        public IEnumerable<T> ReadAll()
         {
             return this.Content;
         }
 
-        public IEnumerable<ProductPartEntity> Reads(Predicate<ProductPartEntity> find)
+        public IEnumerable<T> Reads(Predicate<T> find)
         {
             return this.Content.FindAll(find);
         }
     }
 
-    class MockContext : IRepository<ProductPartEntity>
+    class MockProductPart : IRepository<ProductPartRelation>
     {
-        List<ProductPartEntity> Content;
-        public MockContext()
+        List<ProductPartRelation> Content;
+        public MockProductPart()
         {
-            var content = new List<ProductPartEntity>();
-            content.Add(new ProductPartEntity() { ProductName = "P1", PartType = PartType.ProbeCard, PartName = "PC1", Avaiable = 5 });
-            content.Add(new ProductPartEntity() { ProductName = "P1", PartType = PartType.ProbeCard, PartName = "PC2", Avaiable = 2 });
-            content.Add(new ProductPartEntity() { ProductName = "P1", PartType = PartType.ProbeCard, PartName = "PC3", Avaiable = 1 });
-            content.Add(new ProductPartEntity() { ProductName = "P1", PartType = PartType.Sensor, PartName = "S1", Avaiable = 1 });
-            content.Add(new ProductPartEntity() { ProductName = "P1", PartType = PartType.Sensor, PartName = "S2", Avaiable = 2 });
-            content.Add(new ProductPartEntity() { ProductName = "P1", PartType = PartType.Sensor, PartName = "S3", Avaiable = 3 });
+            var content = new List<ProductPartRelation>();
+            content.Add(new ProductPartRelation() { ProductName = "P1", PartType = PartType.ProbeCard, PartName = "PC1" });
+            content.Add(new ProductPartRelation() { ProductName = "P1", PartType = PartType.ProbeCard, PartName = "PC2" });
+            content.Add(new ProductPartRelation() { ProductName = "P1", PartType = PartType.ProbeCard, PartName = "PC3" });
+            content.Add(new ProductPartRelation() { ProductName = "P1", PartType = PartType.Sensor, PartName = "S1" });
+            content.Add(new ProductPartRelation() { ProductName = "P1", PartType = PartType.Sensor, PartName = "S2" });
+            content.Add(new ProductPartRelation() { ProductName = "P1", PartType = PartType.Sensor, PartName = "S3" });
 
-            //content.Add(new ProductPartEntity() { ProductName = "P2", PartType = PartType.ProbeCard, PartName = "PC1", Avaiable = 5 });
-            content.Add(new ProductPartEntity() { ProductName = "P2", PartType = PartType.ProbeCard, PartName = "PC2", Avaiable = 2 });
-            content.Add(new ProductPartEntity() { ProductName = "P2", PartType = PartType.ProbeCard, PartName = "PC3", Avaiable = 1 });
-            content.Add(new ProductPartEntity() { ProductName = "P2", PartType = PartType.Sensor, PartName = "S1", Avaiable = 1 });
-            //content.Add(new ProductPartEntity() { ProductName = "P2", PartType = PartType.Sensor, PartName = "S2", Avaiable = 2 });
-            //content.Add(new ProductPartEntity() { ProductName = "P2", PartType = PartType.Sensor, PartName = "S3", Avaiable = 3 });
+            content.Add(new ProductPartRelation() { ProductName = "P2", PartType = PartType.ProbeCard, PartName = "PC2" });
+            content.Add(new ProductPartRelation() { ProductName = "P2", PartType = PartType.ProbeCard, PartName = "PC3" });
+            content.Add(new ProductPartRelation() { ProductName = "P2", PartType = PartType.Sensor, PartName = "S1" });
 
-            //content.Add(new ProductPartEntity() { ProductName = "P3", PartType = PartType.ProbeCard, PartName = "PC1", Avaiable = 5 });
-            content.Add(new ProductPartEntity() { ProductName = "P3", PartType = PartType.ProbeCard, PartName = "PC2", Avaiable = 2 });
-            content.Add(new ProductPartEntity() { ProductName = "P3", PartType = PartType.ProbeCard, PartName = "PC3", Avaiable = 1 });
-            //content.Add(new ProductPartEntity() { ProductName = "P3", PartType = PartType.Sensor, PartName = "S1", Avaiable = 1 });
-            content.Add(new ProductPartEntity() { ProductName = "P3", PartType = PartType.Sensor, PartName = "S2", Avaiable = 2 });
-            //content.Add(new ProductPartEntity() { ProductName = "P3", PartType = PartType.Sensor, PartName = "S3", Avaiable = 3 });
+            content.Add(new ProductPartRelation() { ProductName = "P3", PartType = PartType.ProbeCard, PartName = "PC2" });
+            content.Add(new ProductPartRelation() { ProductName = "P3", PartType = PartType.ProbeCard, PartName = "PC3" });
+            content.Add(new ProductPartRelation() { ProductName = "P3", PartType = PartType.Sensor, PartName = "S2" });
 
-            content.Add(new ProductPartEntity() { ProductName = "P4", PartType = PartType.ProbeCard, PartName = "PC1", Avaiable = 5 });
-            //content.Add(new ProductPartEntity() { ProductName = "P4", PartType = PartType.ProbeCard, PartName = "PC2", Avaiable = 2 });
-            content.Add(new ProductPartEntity() { ProductName = "P4", PartType = PartType.ProbeCard, PartName = "PC3", Avaiable = 1 });
-            content.Add(new ProductPartEntity() { ProductName = "P4", PartType = PartType.Sensor, PartName = "S1", Avaiable = 1 });
-            //content.Add(new ProductPartEntity() { ProductName = "P4", PartType = PartType.Sensor, PartName = "S2", Avaiable = 2 });
-            content.Add(new ProductPartEntity() { ProductName = "P4", PartType = PartType.Sensor, PartName = "S3", Avaiable = 3 });
+            content.Add(new ProductPartRelation() { ProductName = "P4", PartType = PartType.ProbeCard, PartName = "PC1" });
+            content.Add(new ProductPartRelation() { ProductName = "P4", PartType = PartType.ProbeCard, PartName = "PC3" });
+            content.Add(new ProductPartRelation() { ProductName = "P4", PartType = PartType.Sensor, PartName = "S1" });
+            content.Add(new ProductPartRelation() { ProductName = "P4", PartType = PartType.Sensor, PartName = "S3" });
 
-            content.Add(new ProductPartEntity() { ProductName = "P5", PartType = PartType.ProbeCard, PartName = "PC1", Avaiable = 5 });
-            content.Add(new ProductPartEntity() { ProductName = "P5", PartType = PartType.ProbeCard, PartName = "PC2", Avaiable = 2 });
-            content.Add(new ProductPartEntity() { ProductName = "P5", PartType = PartType.ProbeCard, PartName = "PC3", Avaiable = 1 });
-            content.Add(new ProductPartEntity() { ProductName = "P5", PartType = PartType.Sensor, PartName = "S1", Avaiable = 1 });
-            content.Add(new ProductPartEntity() { ProductName = "P5", PartType = PartType.Sensor, PartName = "S2", Avaiable = 2 });
-            content.Add(new ProductPartEntity() { ProductName = "P5", PartType = PartType.Sensor, PartName = "S3", Avaiable = 3 });
+            content.Add(new ProductPartRelation() { ProductName = "P5", PartType = PartType.ProbeCard, PartName = "PC1" });
+            content.Add(new ProductPartRelation() { ProductName = "P5", PartType = PartType.ProbeCard, PartName = "PC2" });
+            content.Add(new ProductPartRelation() { ProductName = "P5", PartType = PartType.ProbeCard, PartName = "PC3" });
+            content.Add(new ProductPartRelation() { ProductName = "P5", PartType = PartType.Sensor, PartName = "S1" });
+            content.Add(new ProductPartRelation() { ProductName = "P5", PartType = PartType.Sensor, PartName = "S2" });
+            content.Add(new ProductPartRelation() { ProductName = "P5", PartType = PartType.Sensor, PartName = "S3" });
 
-            content.Add(new ProductPartEntity() { ProductName = "P6", PartType = PartType.ProbeCard, PartName = "PC1", Avaiable = 5 });
-            //content.Add(new ProductPartEntity() { ProductName = "P6", PartType = PartType.ProbeCard, PartName = "PC2", Avaiable = 2 });
-            //content.Add(new ProductPartEntity() { ProductName = "P6", PartType = PartType.ProbeCard, PartName = "PC3", Avaiable = 1 });
-            //content.Add(new ProductPartEntity() { ProductName = "P6", PartType = PartType.Sensor, PartName = "S1", Avaiable = 1 });
-            content.Add(new ProductPartEntity() { ProductName = "P6", PartType = PartType.Sensor, PartName = "S2", Avaiable = 2 });
-            content.Add(new ProductPartEntity() { ProductName = "P6", PartType = PartType.Sensor, PartName = "S3", Avaiable = 3 });
+            content.Add(new ProductPartRelation() { ProductName = "P6", PartType = PartType.ProbeCard, PartName = "PC1" });
+            content.Add(new ProductPartRelation() { ProductName = "P6", PartType = PartType.Sensor, PartName = "S2" });
+            content.Add(new ProductPartRelation() { ProductName = "P6", PartType = PartType.Sensor, PartName = "S3" });
             this.Content = content;
         }
 
-        public ProductPartEntity Read(Predicate<ProductPartEntity> find)
+        public ProductPartRelation Read(Predicate<ProductPartRelation> find)
         {
             return this.Content.Find(find);
         }
 
-        public IEnumerable<ProductPartEntity> ReadAll()
+        public IEnumerable<ProductPartRelation> ReadAll()
         {
             return this.Content;
         }
 
-        public IEnumerable<ProductPartEntity> Reads(Predicate<ProductPartEntity> find)
+        public IEnumerable<ProductPartRelation> Reads(Predicate<ProductPartRelation> find)
         {
             return this.Content.FindAll(find);
+        }
+    }
+
+    class MockPart : IRepository<Part>
+    {
+        List<Part> Parts;
+
+        public MockPart()
+        {
+            var parts = new List<Part>();
+            parts.Add(new Part(PartType.ProbeCard, "PC1", 5));
+            parts.Add(new Part(PartType.ProbeCard, "PC2", 2));
+            parts.Add(new Part(PartType.ProbeCard, "PC3", 1));
+            parts.Add(new Part(PartType.Sensor, "S1", 1));
+            parts.Add(new Part(PartType.Sensor, "S2", 2));
+            parts.Add(new Part(PartType.Sensor, "S3", 3));
+            this.Parts = parts;
+        }
+
+        public Part Read(Predicate<Part> find)
+        {
+            return this.Parts.Find(find);
+        }
+
+        public IEnumerable<Part> ReadAll()
+        {
+            return this.Parts;
+        }
+
+        public IEnumerable<Part> Reads(Predicate<Part> find)
+        {
+            return this.Parts.FindAll(find);
         }
     }
 }

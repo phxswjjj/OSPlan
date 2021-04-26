@@ -12,7 +12,7 @@ namespace OSPlan
         public List<PartSlot> PartSlots { get; private set; }
         public int EqpCount { get; private set; }
 
-        public Product(string name, List<ProductPartEntity> productPartEntities)
+        public Product(string name, List<ProductPartRelation> productPartEntities, IRepository<Part> partRepo)
         {
             this.Name = name;
 
@@ -21,7 +21,7 @@ namespace OSPlan
             var gPartTypes = productPartEntities.GroupBy(p => p.PartType);
             foreach (var gPartType in gPartTypes)
             {
-                var slot = new PartSlot(gPartType.Key, gPartType.ToList());
+                var slot = new PartSlot(gPartType.Key, gPartType.ToList(), partRepo);
                 dic.Add(gPartType.Key, slot);
             }
             this.PartSlots = dic.Select(d => d.Value).ToList();

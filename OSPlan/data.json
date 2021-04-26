@@ -2,151 +2,126 @@
   {
     "ProductName": "P1",
     "PartType": 0,
-    "PartName": "PC1",
-    "Avaiable": 5
+    "PartName": "PC1"
   },
   {
     "ProductName": "P1",
     "PartType": 0,
-    "PartName": "PC2",
-    "Avaiable": 2
+    "PartName": "PC2"
   },
   {
     "ProductName": "P1",
     "PartType": 0,
-    "PartName": "PC3",
-    "Avaiable": 1
+    "PartName": "PC3"
   },
   {
     "ProductName": "P1",
     "PartType": 1,
-    "PartName": "S1",
-    "Avaiable": 1
+    "PartName": "S1"
   },
   {
     "ProductName": "P1",
     "PartType": 1,
-    "PartName": "S2",
-    "Avaiable": 2
+    "PartName": "S2"
   },
   {
     "ProductName": "P1",
     "PartType": 1,
-    "PartName": "S3",
-    "Avaiable": 3
+    "PartName": "S3"
   },
   {
     "ProductName": "P2",
     "PartType": 0,
-    "PartName": "PC2",
-    "Avaiable": 2
+    "PartName": "PC2"
   },
   {
     "ProductName": "P2",
     "PartType": 0,
-    "PartName": "PC3",
-    "Avaiable": 1
+    "PartName": "PC3"
   },
   {
     "ProductName": "P2",
     "PartType": 1,
-    "PartName": "S1",
-    "Avaiable": 1
+    "PartName": "S1"
   },
   {
     "ProductName": "P3",
     "PartType": 0,
-    "PartName": "PC2",
-    "Avaiable": 2
+    "PartName": "PC2"
   },
   {
     "ProductName": "P3",
     "PartType": 0,
-    "PartName": "PC3",
-    "Avaiable": 1
+    "PartName": "PC3"
   },
   {
     "ProductName": "P3",
     "PartType": 1,
-    "PartName": "S2",
-    "Avaiable": 2
+    "PartName": "S2"
   },
   {
     "ProductName": "P4",
     "PartType": 0,
-    "PartName": "PC1",
-    "Avaiable": 5
+    "PartName": "PC1"
   },
   {
     "ProductName": "P4",
     "PartType": 0,
-    "PartName": "PC3",
-    "Avaiable": 1
+    "PartName": "PC3"
   },
   {
     "ProductName": "P4",
     "PartType": 1,
-    "PartName": "S1",
-    "Avaiable": 1
+    "PartName": "S1"
   },
   {
     "ProductName": "P4",
     "PartType": 1,
-    "PartName": "S3",
-    "Avaiable": 3
+    "PartName": "S3"
   },
   {
     "ProductName": "P5",
     "PartType": 0,
-    "PartName": "PC1",
-    "Avaiable": 5
+    "PartName": "PC1"
   },
   {
     "ProductName": "P5",
     "PartType": 0,
-    "PartName": "PC2",
-    "Avaiable": 2
+    "PartName": "PC2"
   },
   {
     "ProductName": "P5",
     "PartType": 0,
-    "PartName": "PC3",
-    "Avaiable": 1
+    "PartName": "PC3"
   },
   {
     "ProductName": "P5",
     "PartType": 1,
-    "PartName": "S1",
-    "Avaiable": 1
+    "PartName": "S1"
   },
   {
     "ProductName": "P5",
     "PartType": 1,
-    "PartName": "S2",
-    "Avaiable": 2
+    "PartName": "S2"
   },
   {
     "ProductName": "P5",
     "PartType": 1,
-    "PartName": "S3",
-    "Avaiable": 3
+    "PartName": "S3"
   },
   {
     "ProductName": "P6",
     "PartType": 0,
-    "PartName": "PC1",
-    "Avaiable": 5
+    "PartName": "PC1"
   },
   {
     "ProductName": "P6",
     "PartType": 1,
-    "PartName": "S2",
-    "Avaiable": 2
+    "PartName": "S2"
   },
   {
     "ProductName": "P6",
     "PartType": 1,
-    "PartName": "S3",
-    "Avaiable": 3
+    "PartName": "S3"
   }
 ]

@@ -1,0 +1,32 @@
+[
+  {
+    "PartType": 0,
+    "Name": "PC1",
+    "Avaiable": 5
+  },
+  {
+    "PartType": 0,
+    "Name": "PC2",
+    "Avaiable": 2
+  },
+  {
+    "PartType": 0,
+    "Name": "PC3",
+    "Avaiable": 1
+  },
+  {
+    "PartType": 1,
+    "Name": "S1",
+    "Avaiable": 1
+  },
+  {
+    "PartType": 1,
+    "Name": "S2",
+    "Avaiable": 2
+  },
+  {
+    "PartType": 1,
+    "Name": "S3",
+    "Avaiable": 3
+  }
+]

@@ -11,15 +11,15 @@ namespace OSPlan
         public PartType PartType { get; private set; }
         public List<Part> Parts { get; private set; }
 
-        public PartSlot(PartType partType, List<ProductPartEntity> productPartEntities)
+        public PartSlot(PartType partType, List<ProductPartRelation> productPartEntities, IRepository<Part> partRepo)
         {
             this.PartType = partType;
 
             var dic = new Dictionary<string, Part>();
-            foreach (var part in productPartEntities)
+            foreach (var productPart in productPartEntities)
             {
-                var p = new Part(part.PartName, part.Avaiable);
-                dic.Add(part.PartName, p);
+                var part = partRepo.Read(p => p.PartType == productPart.PartType && p.Name == productPart.PartName);
+                dic.Add(productPart.PartName, part);
             }
             this.Parts = dic.Select(d => d.Value).ToList();
         }

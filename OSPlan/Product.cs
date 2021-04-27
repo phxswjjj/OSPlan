@@ -9,32 +9,38 @@ namespace OSPlan
     class Product
     {
         public string Name;
-        public List<PartSlot> PartSlots { get; private set; }
+        public List<ISlot<SlotItem>> Slots { get; private set; }
         public int EqpCount { get; private set; }
 
-        public Product(string name, List<ProductPartRelation> productPartEntities, IRepository<Part> partRepo)
+        public Product(string name, List<ProductPartRelation> productPartEntities, IRepository<Part> partRepo, IRepository<ProductEqpPlan> plans)
         {
             this.Name = name;
 
             var dic = new Dictionary<PartType, PartSlot>();
-            this.PartSlots = new List<PartSlot>();
+            this.Slots = new List<ISlot<SlotItem>>();
             var gPartTypes = productPartEntities.GroupBy(p => p.PartType);
             foreach (var gPartType in gPartTypes)
             {
                 var slot = new PartSlot(gPartType.Key, gPartType.ToList(), partRepo);
                 dic.Add(gPartType.Key, slot);
             }
-            this.PartSlots = dic.Select(d => d.Value).ToList();
+            this.Slots = dic.Select(d => d.Value).Select(d => (ISlot<SlotItem>)d).ToList();
+
+            var plan = plans.Read(p => p.ProductName == name);
+            if (plan == null)
+                this.Slots.Add(new PlanSlot(name, 0));
+            else
+                this.Slots.Add(new PlanSlot(name, plan.EqpCount));
         }
 
         public int ApplyPlan(int avaiableCount)
         {
             if (avaiableCount == 0) return 0;
-            if (this.PartSlots.Count == 0) return 0;
+            if (this.Slots.Count == 0) return 0;
 
             var planCount = avaiableCount;
             #region check
-            foreach (var slot in this.PartSlots)
+            foreach (var slot in this.Slots)
             {
                 var cnt = slot.TryPlan(planCount);
                 if (cnt < planCount)
@@ -48,7 +54,7 @@ namespace OSPlan
                 return 0;
 
             #region apply
-            foreach (var slot in this.PartSlots)
+            foreach (var slot in this.Slots)
             {
                 if (!slot.ApplyPlan(planCount))
                     throw new Exception($"{this.Name} Apply {planCount} Fail");

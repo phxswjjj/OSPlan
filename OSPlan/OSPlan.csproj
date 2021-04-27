@@ -56,14 +56,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IRepository.cs" />
+    <Compile Include="ISlot.cs" />
     <Compile Include="Part.cs" />
     <Compile Include="PartSlot.cs" />
     <Compile Include="PartType.cs" />
+    <Compile Include="PlanSlot.cs" />
     <Compile Include="Product.cs" />
+    <Compile Include="ProductEqpPlan.cs" />
     <Compile Include="ProductPartRelation.cs" />
     <Compile Include="ProductRepository.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SlotItem.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -71,7 +75,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Include="packages.config" />
-    <None Include="parts.json" />
+    <Content Include="parts.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="plans.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

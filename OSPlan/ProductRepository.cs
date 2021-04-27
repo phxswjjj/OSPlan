@@ -10,14 +10,14 @@ namespace OSPlan
     {
         List<Product> Products;
 
-        public ProductRepository(IRepository<ProductPartRelation> productRepo, IRepository<Part> partRepo)
+        public ProductRepository(IRepository<ProductPartRelation> productRepo, IRepository<Part> partRepo, IRepository<ProductEqpPlan> plans)
         {
             var dic = new Dictionary<string, Product>();
             var list = productRepo.ReadAll();
             var gProducts = list.GroupBy(p => p.ProductName);
             foreach (var gProduct in gProducts)
             {
-                var product = new Product(gProduct.Key, gProduct.ToList(), partRepo);
+                var product = new Product(gProduct.Key, gProduct.ToList(), partRepo, plans);
                 dic.Add(gProduct.Key, product);
             }
             this.Products = dic.Select(d => d.Value).ToList();

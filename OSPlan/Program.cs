@@ -20,12 +20,14 @@ namespace OSPlan
             {
                 container.RegisterType<IRepository<ProductPartRelation>, MockProductPart>(new Unity.Lifetime.PerResolveLifetimeManager());
                 container.RegisterType<IRepository<Part>, MockPart>(new Unity.Lifetime.PerResolveLifetimeManager());
+                container.RegisterType<IRepository<ProductEqpPlan>, MockMCPlan>(new Unity.Lifetime.PerResolveLifetimeManager());
                 SaveRepository(container);
             }
             else
             {
                 container.RegisterType<IRepository<ProductPartRelation>, JsonContext<ProductPartRelation>>(new Unity.Lifetime.PerResolveLifetimeManager(), new InjectionConstructor("data.json"));
                 container.RegisterType<IRepository<Part>, JsonContext<Part>>(new Unity.Lifetime.PerResolveLifetimeManager(), new InjectionConstructor("parts.json"));
+                container.RegisterType<IRepository<ProductEqpPlan>, JsonContext<ProductEqpPlan>>(new Unity.Lifetime.PerResolveLifetimeManager(), new InjectionConstructor("plans.json"));
             }
 
             var products = container.Resolve<ProductRepository>().ReadAll();
@@ -53,6 +55,9 @@ namespace OSPlan
             Console.WriteLine(s);
 
             Console.WriteLine($"總開機數：{totalPlanCount}, 閒置機台數：{avaiableCount}");
+
+            Console.WriteLine();
+            Console.WriteLine("press ENTER to be continue...");
             Console.ReadLine();
         }
 
@@ -74,6 +79,15 @@ namespace OSPlan
             using (var writter = new StreamWriter("parts.json"))
             {
                 writter.Write(partResult);
+            }
+
+            var planRepo = container.Resolve<IRepository<ProductEqpPlan>>();
+            var planData = planRepo.ReadAll();
+
+            var planResult = JsonConvert.SerializeObject(planData, Formatting.Indented);
+            using (var writter = new StreamWriter("plans.json"))
+            {
+                writter.Write(planResult);
             }
         }
     }
@@ -190,6 +204,34 @@ namespace OSPlan
         public IEnumerable<Part> Reads(Predicate<Part> find)
         {
             return this.Parts.FindAll(find);
+        }
+    }
+
+    class MockMCPlan : IRepository<ProductEqpPlan>
+    {
+        List<ProductEqpPlan> Plans;
+
+        public MockMCPlan()
+        {
+            var plans = new List<ProductEqpPlan>();
+            plans.Add(new ProductEqpPlan() { ProductName = "P1", EqpCount = 2 });
+            plans.Add(new ProductEqpPlan() { ProductName = "P3", EqpCount = 1 });
+            this.Plans = plans;
+        }
+
+        public ProductEqpPlan Read(Predicate<ProductEqpPlan> find)
+        {
+            return this.Plans.Find(find);
+        }
+
+        public IEnumerable<ProductEqpPlan> ReadAll()
+        {
+            return this.Plans;
+        }
+
+        public IEnumerable<ProductEqpPlan> Reads(Predicate<ProductEqpPlan> find)
+        {
+            return this.Plans.FindAll(find);
         }
     }
 }

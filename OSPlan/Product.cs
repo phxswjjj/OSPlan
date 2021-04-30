@@ -12,13 +12,12 @@ namespace OSPlan
         public List<ISlot<SlotItem>> Slots { get; private set; }
         public int EqpCount { get; private set; }
 
-        public Product(string name, List<ProductPartRelation> productPartEntities, IRepository<Part> partRepo, IRepository<ProductEqpPlan> plans)
+        public Product(ProductEqpPlan productPlan, IRepository<Part> partRepo, IRepository<ProductPartRelation> productRepo)
         {
-            this.Name = name;
+            this.Name = productPlan.ProductName;
 
             var dic = new Dictionary<PartType, PartSlot>();
-            this.Slots = new List<ISlot<SlotItem>>();
-            var gPartTypes = productPartEntities.GroupBy(p => p.PartType);
+            var gPartTypes = productRepo.Reads(p => p.ProductName == this.Name).GroupBy(p => p.PartType);
             foreach (var gPartType in gPartTypes)
             {
                 var slot = new PartSlot(gPartType.Key, gPartType.ToList(), partRepo);
@@ -26,11 +25,7 @@ namespace OSPlan
             }
             this.Slots = dic.Select(d => d.Value).Select(d => (ISlot<SlotItem>)d).ToList();
 
-            var plan = plans.Read(p => p.ProductName == name);
-            if (plan == null)
-                this.Slots.Add(new PlanSlot(name, 0));
-            else
-                this.Slots.Add(new PlanSlot(name, plan.EqpCount));
+            this.Slots.Add(new PlanSlot(this.Name, productPlan.EqpCount));
         }
 
         public int ApplyPlan(int avaiableCount)

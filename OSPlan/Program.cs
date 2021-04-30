@@ -216,6 +216,8 @@ namespace OSPlan
             var plans = new List<ProductEqpPlan>();
             plans.Add(new ProductEqpPlan() { ProductName = "P1", EqpCount = 2 });
             plans.Add(new ProductEqpPlan() { ProductName = "P3", EqpCount = 1 });
+            plans.Add(new ProductEqpPlan() { ProductName = "P3", EqpCount = 1 });
+            plans.Add(new ProductEqpPlan() { ProductName = "P1", EqpCount = 1 });
             this.Plans = plans;
         }
 

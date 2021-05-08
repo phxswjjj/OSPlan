@@ -40,10 +40,29 @@ namespace OSPlan
 
         public bool ApplyPlan(int planCount)
         {
+            if (planCount <= 0)
+                throw new Exception($"plan is equal or less than zero");
+
             var origin = planCount;
-            foreach (var part in this.SlotItems)
+            var maxAvaiable = this.SlotItems.Max(p => p.Avaiable);
+            //先處理數量較多的項目，逐一抵用
+            for (var i = maxAvaiable; i > 0; i--)
             {
-                planCount -= part.Apply(planCount);
+                var checkAvaiable = i;
+
+                var parts = (from p in this.SlotItems
+                             orderby p.Avaiable * -1, p.Name
+                             select p).GetEnumerator();
+                while (parts.MoveNext())
+                {
+                    var part = parts.Current;
+                    if (part.Avaiable == checkAvaiable)
+                    {
+                        planCount -= part.Apply(1);
+                        if (planCount == 0) break;
+                    }
+                }
+                if (planCount == 0) break;
             }
             return origin != planCount;
         }

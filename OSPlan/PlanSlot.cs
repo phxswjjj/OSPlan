@@ -28,7 +28,7 @@ namespace OSPlan
         {
             if (avaiableCount == 0) return 0;
             var eqpCount = this.EqpCount;
-            var planCount = 0;
+            int planCount;
             if (avaiableCount >= eqpCount)
                 planCount = eqpCount;
             else

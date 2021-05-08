@@ -9,9 +9,12 @@ namespace OSPlan
     class ProductRepository : IRepository<Product>
     {
         List<Product> Products;
+        public IRepository<Part> PartRepo { get; private set; }
 
         public ProductRepository(IRepository<ProductEqpPlan> plans, IRepository<Part> partRepo, IRepository<ProductPartRelation> productRepo)
         {
+            this.PartRepo = partRepo;
+
             var products = new List<Product>();
             foreach (var productPlan in plans.ReadAll())
             {

@@ -30,7 +30,8 @@ namespace OSPlan
                 container.RegisterType<IRepository<ProductEqpPlan>, JsonContext<ProductEqpPlan>>(new Unity.Lifetime.PerResolveLifetimeManager(), new InjectionConstructor("plans.json"));
             }
 
-            var products = container.Resolve<ProductRepository>().ReadAll();
+            var repo = container.Resolve<ProductRepository>();
+            var products = repo.ReadAll();
 
             #region sort products..
 
@@ -43,6 +44,7 @@ namespace OSPlan
                 var planCount = product.ApplyPlan(avaiableCount);
                 totalPlanCount += planCount;
                 avaiableCount -= planCount;
+                if (avaiableCount <= 0) break;
             }
 
             var results = from product in products
@@ -53,6 +55,14 @@ namespace OSPlan
                 writter.Write(s);
             }
             Console.WriteLine(s);
+
+            //check parts result
+            var parts = repo.PartRepo.ReadAll();
+            var s2 = JsonConvert.SerializeObject(parts, Formatting.Indented);
+            using (var writter = new StreamWriter("result-part.json"))
+            {
+                writter.Write(s2);
+            }
 
             Console.WriteLine($"總開機數：{totalPlanCount}, 閒置機台數：{avaiableCount}");
 

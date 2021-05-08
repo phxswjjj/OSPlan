@@ -8,6 +8,7 @@ namespace OSPlan
 {
     abstract class SlotItem
     {
+        public string Name { get; protected set; }
         public int Avaiable { get; protected set; }
 
         internal int Apply(int planCount)
